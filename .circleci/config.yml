@@ -158,6 +158,7 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople-backend \
               --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID} \
+              --region us-west-2 \
               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID}
   
       - run:
@@ -167,6 +168,7 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople-frontend \
               --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID} \
+              --region us-west-2 \
               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID}
       - run:
           name: Add back-end ip to ansible inventory
@@ -191,7 +193,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment
-      - slack-failure-notification    
+      #- slack-failure-notification    
 
   configure-infrastructure:
     docker:
@@ -222,7 +224,7 @@ jobs:
             cd ~/project/.circleci/ansible
             ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory.txt configure-node-exporter.yml
       - destroy-environment
-      - slack-failure-notification  
+      #- slack-failure-notification  
 
   run-migrations:
     <<: *defaults
@@ -260,7 +262,7 @@ jobs:
               https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID}
       - destroy-environment
       - revert-migrations
-      - slack-failure-notification
+      #- slack-failure-notification
 
   deploy-frontend:
     <<: *defaults
@@ -292,7 +294,7 @@ jobs:
             aws s3 cp ./frontend/dist s3://udapeople-${CIRCLE_WORKFLOW_ID}/ --recursive
       - destroy-environment
       - revert-migrations
-      - slack-failure-notification           
+      #- slack-failure-notification           
                     
   deploy-backend:
     docker:
@@ -333,7 +335,7 @@ jobs:
             ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
       - revert-migrations
-      - slack-failure-notification
+      #- slack-failure-notification
 
   smoke-test:
     docker:
@@ -363,7 +365,7 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
-      - slack-failure-notification        
+      #- slack-failure-notification        
 
   cloudfront-update:
     docker:
@@ -385,7 +387,7 @@ jobs:
 
       - destroy-environment
       - revert-migrations  
-      - slack-failure-notification
+      #- slack-failure-notification
 
   cleanup:
     docker:
